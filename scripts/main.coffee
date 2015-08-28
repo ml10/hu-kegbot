@@ -8,8 +8,8 @@
 #   LIST_OF_ENV_VARS_TO_SET
 #
 # Commands:
-#   hubot <trigger> - <what the respond trigger does>
-#   <trigger> - <what the hear trigger does>
+#   hubot what( beers are|'s) on tap? - shows the current beers on tap
+#   hubot what( beers are|'s) on deck? - shows the beers on deck
 #
 # Notes:
 #   <optional notes required for the script>
@@ -26,8 +26,11 @@ module.exports = (robot) ->
     robot.logger.error 'HUBOT_KEGBOT_TOKEN not set!'
     return
 
-  robot.respond /what beers are on tap?/i, (res) ->
-    get_taps res   
+  robot.respond /what( beers are|'s) on tap?/i, (res) ->
+    get_current_taps res   
+
+  robot.respond /what( beers are|'s) on deck?/i, (res) ->
+    get_kegs_on_deck res   
 
 get_taps = (message) ->
   taps = process.env.HUBOT_KEGBOT_URL + '/api/taps/'
@@ -41,8 +44,24 @@ get_taps = (message) ->
           msg.push("Tap #{tap.id}: #{tap.current_keg.beverage.name}")
         message.send msg.join("\n")
       catch error
+        console.log('Uncaught error: ' + error)
         robot.logger.error 'Uncaught error: ' + error
 
+get_kegs_on_deck = (message) ->   
+  ondeck = process.env.HUBOT_KEGBOT_URL + '/api/kegs/'
+  message.http(ondeck)
+    .headers('X-Kegbot-Api-Key': process.env.HUBOT_KEGBOT_TOKEN)
+    .get() (error, response, body) ->
+      data = JSON.parse(body)
+      onDeck = (keg for keg in data.objects when keg.percent_full == 100 && !keg.online)
+      msg = [] 
+      try
+        for keg in onDeck
+          msg.push(keg.beverage.name)
+        message.send msg.join("\n")
+      catch error
+        console.log('Uncaught error: ' + error)
+        robot.logger.error 'Uncaught error: ' + error
   ##
   # EXAMPLES
   # Below are some example Hubot interactions. You will want to delete these
