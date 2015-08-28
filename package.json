@@ -1,0 +1,18 @@
+{
+  "name": "hu-kegbot",
+  "version": "1.0.0",
+  "description": "Hubot script for getting info from kegbot",
+  "main": "index.js",
+  "scripts": {
+    "shell": "hubot --adapter shell --disable-httpd",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "hubot",
+    "hubot-scripts"
+  ],
+  "devDependencies": {
+    "coffee-script": "^1.9.3",
+    "hubot": "^2.16.0"
+  }
+}
