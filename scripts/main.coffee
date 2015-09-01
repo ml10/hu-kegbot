@@ -30,17 +30,27 @@ module.exports = (robot) ->
   robot.respond /what( beers are|'s) on deck?/i, (res) ->
     get_kegs_on_deck res   
 
-get_taps = (message) ->
+get_current_taps = (message) ->
   taps = process.env.HUBOT_KEGBOT_URL + '/api/taps/'
   message.http(taps)
     .headers('X-Kegbot-Api-Key': process.env.HUBOT_KEGBOT_TOKEN)
     .get() (error, response, body) ->
       data = JSON.parse(body)
-      msg = [] 
+      messages = []
       try
         for tap in data.objects
-          msg.push("Tap #{tap.id}: #{tap.current_keg.beverage.name}")
-        message.send msg.join("\n")
+          tapLocation = if tap.name == 'RIGHT' then 'Right' else 'Left'
+          remaining = Math.round(tap.current_keg.percent_full)
+          msg = "The #{tapLocation} tap has #{tap.current_keg.beverage.name}"
+          if tap.current_keg.type?.abv && tap.current_keg.type.abv > 0
+            msg = msg + " (#{tap.current_keg.type.abv}% ABV)"
+          if tap.current_keg.beverage?.style
+            msg = msg + " a #{tap.current_keg.beverage?.style}"
+          if tap.current_keg.beverage?.producer?.name
+            msg = msg + " by #{tap.current_keg.beverage?.producer?.name}"
+          msg = msg + " with #{remaining}% remaining."
+          messages.push(msg)
+        message.send messages.join("\n")
       catch error
         console.log('Uncaught error: ' + error)
         robot.logger.error 'Uncaught error: ' + error
@@ -52,11 +62,11 @@ get_kegs_on_deck = (message) ->
     .get() (error, response, body) ->
       data = JSON.parse(body)
       onDeck = (keg for keg in data.objects when keg.percent_full == 100 && !keg.online)
-      msg = [] 
+      messages = []
       try
         for keg in onDeck
-          msg.push(keg.beverage.name)
-        message.send msg.join("\n")
+          messages.push(keg.beverage.name)
+        message.send messages.join("\n")
       catch error
         console.log('Uncaught error: ' + error)
         robot.logger.error 'Uncaught error: ' + error
