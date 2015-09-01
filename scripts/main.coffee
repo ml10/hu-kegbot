@@ -5,15 +5,18 @@
 #   None
 #
 # Configuration:
-#   HUBOT_KEGBOT_URL - the kegbot url to target
-#   HUBOT_KEGBOT_TOKEN - a kegbot API token
+#   HUBOT_KEGBOT_URL
+#   HUBOT_KEGBOT_TOKEN
 #
 # Commands:
 #   hubot what( beers are|'s) on tap? - shows the current beers on tap
 #   hubot what( beers are|'s) on deck? - shows the beers on deck
 #
+# Notes:
+#   None
+#
 # Author:
-#   https://github.com/ml10
+#   ml10
 
 module.exports = (robot) ->
   unless process.env.HUBOT_KEGBOT_URL?
