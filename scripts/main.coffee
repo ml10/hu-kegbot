@@ -50,7 +50,10 @@ get_current_taps = (message) ->
             msg = msg + " by #{tap.current_keg.beverage?.producer?.name}"
           msg = msg + " with #{remaining}% remaining."
           messages.push(msg)
-        message.send messages.join("\n")
+        if messages.length > 0
+          message.send messages.join("\n")
+        else
+          message.send "Nothing's is on tap right now, sorry. Better head to Bockwinkle's to fend for yourself."
       catch error
         console.log('Uncaught error: ' + error)
         robot.logger.error 'Uncaught error: ' + error
@@ -66,7 +69,10 @@ get_kegs_on_deck = (message) ->
       try
         for keg in onDeck
           messages.push(keg.beverage.name)
-        message.send messages.join("\n")
+        if messages.length > 0
+          message.send messages.join("\n")
+        else
+          message.send 'No taps on deck, please drink slowly.'
       catch error
         console.log('Uncaught error: ' + error)
         robot.logger.error 'Uncaught error: ' + error
