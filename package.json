@@ -1,6 +1,6 @@
 {
   "name": "hu-kegbot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Hubot script for getting info from kegbot",
   "main": "index.js",
   "scripts": {
