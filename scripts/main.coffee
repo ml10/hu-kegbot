@@ -42,9 +42,8 @@ get_current_taps = (message) ->
       messages = []
       try
         for tap in data.objects
-          tapLocation = if tap.name == 'RIGHT' then 'Right' else 'Left'
           remaining = Math.round(tap.current_keg.percent_full)
-          msg = "The #{tapLocation} tap has #{tap.current_keg.beverage.name}"
+          msg = "The #{tap.name} has #{tap.current_keg.beverage.name}"
           if tap.current_keg.type?.abv && tap.current_keg.type.abv > 0
             msg = msg + " (#{tap.current_keg.type.abv}% ABV)"
           if tap.current_keg.beverage?.style
